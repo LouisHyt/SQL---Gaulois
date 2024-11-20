@@ -1,3 +1,5 @@
+-- PARTIE 1
+
 -- 1
 SELECT nom_lieu
 FROM lieu
@@ -155,4 +157,35 @@ WHERE ab.id_potion IS NULL OR ab.id_personnage NOT IN (
 	JOIN potion po ON ab.id_potion = po.id_potion
 	WHERE po.nom_potion LIKE "%Magique%"
 )
+
+-- Partie 2
+
+-- A
+INSERT INTO personnage (nom_personnage, adresse_personnage, image_personnage, id_lieu, id_specialite)
+VALUES (
+	"Champdeblix",
+	"Ferme Hantassion",
+	"indisponible.jpg",
+	(SELECT id_lieu FROM lieu WHERE nom_lieu LIKE "%Rotomagus%"),
+	(SELECT id_specialite FROM specialite WHERE nom_specialite LIKE "%Agriculteur%")
+)
+
+-- B
+
+INSERT INTO autoriser_boire
+VALUES(
+	(SELECT id_potion FROM potion WHERE nom_potion LIKE "%Magique%"),
+	(SELECT id_personnage FROM personnage WHERE nom_personnage LIKE "%Bonemine%")
+)
+
+
+-- C
+
+DELETE casque
+LEFT JOIN type_casque tc ON ca.id_type_casque = tc.id_type_casque
+LEFT JOIN prendre_casque pc ON ca.id_casque = pc.id_casque
+WHERE tc.nom_type_casque LIKE "Grec" AND pc.id_bataille IS NULL
+-- D
+-- E
+-- F
 
