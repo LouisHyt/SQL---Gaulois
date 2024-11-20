@@ -101,6 +101,7 @@ AS
 	FROM bataille ba
 	JOIN prendre_casque pc ON pc.id_bataille = ba.id_bataille
 	GROUP BY ba.id_bataille
+;
 
 SELECT nom_bataille, total
 FROM nb_casque_pris
@@ -137,6 +138,21 @@ FROM lieu_population
 WHERE nom_lieu NOT LIKE "%Village gaulois%"
 ORDER BY population DESC
 
-
 -- 14
+SELECT per.nom_personnage
+FROM personnage per
+LEFT JOIN boire bo ON per.id_personnage = bo.id_personnage
+WHERE bo.id_personnage IS NULL
+
+-- 15
+SELECT per.nom_personnage
+FROM personnage per
+LEFT JOIN autoriser_boire ab ON per.id_personnage = ab.id_personnage
+WHERE ab.id_potion IS NULL OR ab.id_personnage NOT IN (
+	SELECT per.id_personnage
+	FROM personnage per
+	JOIN autoriser_boire ab ON per.id_personnage = ab.id_personnage
+	JOIN potion po ON ab.id_potion = po.id_potion
+	WHERE po.nom_potion LIKE "%Magique%"
+)
 
