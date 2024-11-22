@@ -231,11 +231,11 @@ DELETE FROM composer
 WHERE id_potion = (
 	SELECT id_potion
 	FROM potion
-	WHERE nom_potion LIKE "%Soupe%"
+	WHERE nom_potion LIKE "Soupe"
 ) AND id_ingredient = (
 	SELECT id_ingredient
 	FROM ingredient
-	WHERE nom_ingredient LIKE "%Persil%"
+	WHERE nom_ingredient LIKE "Persil"
 )
 
 -- F
