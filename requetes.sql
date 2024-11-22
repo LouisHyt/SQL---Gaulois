@@ -48,7 +48,7 @@ INNER JOIN composer com ON com.id_ingredient = ing.id_ingredient
 WHERE com.id_potion = (
 	SELECT id_potion
 	FROM potion
-	WHERE nom_potion LIKE "Santé"
+	WHERE LOWER(nom_potion) = "santé"
 )
 
 -- 8
@@ -58,7 +58,7 @@ INNER JOIN prendre_casque pc ON pc.id_personnage = pr.id_personnage
 WHERE pc.id_bataille = (
 	SELECT id_bataille
 	FROM bataille
-	WHERE nom_bataille LIKE "Bataille du village gaulois"
+	WHERE LOWER(nom_bataille) = "bataille du village gaulois"
 )
 HAVING pc.qte >= ALL(
 	SELECT pc.qte
@@ -67,7 +67,7 @@ HAVING pc.qte >= ALL(
 	WHERE pc.id_bataille = (
 		SELECT id_bataille
 		FROM bataille
-		WHERE nom_bataille LIKE "Bataille du village gaulois"
+		WHERE LOWER(nom_bataille) = "bataille du village gaulois"
 	)
 )
 
@@ -125,7 +125,7 @@ SELECT po.nom_potion
 FROM potion po
 INNER JOIN composer co ON co.id_potion = po.id_potion
 INNER JOIN ingredient ing ON ing.id_ingredient = co.id_ingredient
-WHERE ing.nom_ingredient LIKE "Poisson frais"
+WHERE LOWER(ing.nom_ingredient) = "poisson frais"
 
 -- 13
 CREATE VIEW lieu_population
@@ -138,7 +138,7 @@ AS
 
 SELECT nom_lieu, population 
 FROM lieu_population
-WHERE nom_lieu NOT LIKE "%Village gaulois%"
+WHERE LOWER(nom_lieu) != "village gaulois"
 ORDER BY population DESC
 
 -- OU
@@ -146,12 +146,12 @@ SELECT li.nom_lieu AS nom_lieu, COUNT(per.id_personnage) AS population
 FROM lieu li
 INNER JOIN personnage per ON per.id_lieu = li.id_lieu
 GROUP BY li.id_lieu
-HAVING li.nom_lieu NOT LIKE "%Village gaulois%" AND population >= ALL (
+HAVING LOWER(li.nom_lieu) != "village gaulois" AND population >= ALL (
 	SELECT COUNT(per.id_personnage) AS population
 	FROM lieu li
 	INNER JOIN personnage per ON per.id_lieu = li.id_lieu
 	GROUP BY li.nom_lieu
-	HAVING li.nom_lieu NOT LIKE "%Village gaulois%"
+	HAVING LOWER(li.nom_lieu) != "village gaulois"
 )
 
 -- 14
@@ -177,7 +177,7 @@ WHERE ab.id_potion IS NULL OR ab.id_personnage NOT IN (
 	FROM personnage per
 	INNER JOIN autoriser_boire ab ON per.id_personnage = ab.id_personnage
 	INNER JOIN potion po ON ab.id_potion = po.id_potion
-	WHERE po.nom_potion LIKE "%Magique%"
+	WHERE LOWER(po.nom_potion) = "magique"
 )
 
 
@@ -189,15 +189,15 @@ VALUES (
 	"Champdeblix",
 	"Ferme Hantassion",
 	"indisponible.jpg",
-	(SELECT id_lieu FROM lieu WHERE nom_lieu LIKE "%Rotomagus%"),
-	(SELECT id_specialite FROM specialite WHERE nom_specialite LIKE "%Agriculteur%")
+	(SELECT id_lieu FROM lieu WHERE LOWER(nom_lieu) = "rotomagus"),
+	(SELECT id_specialite FROM specialite WHERE LOWER(nom_specialite) = "agriculteur")
 )
 
 -- B
 INSERT INTO autoriser_boire
 VALUES(
-	(SELECT id_potion FROM potion WHERE nom_potion LIKE "%Magique%"),
-	(SELECT id_personnage FROM personnage WHERE nom_personnage LIKE "%Bonemine%")
+	(SELECT id_potion FROM potion WHERE LOWER(nom_potion) = "magique"),
+	(SELECT id_personnage FROM personnage WHERE LOWER(nom_personnage) = "bonemine")
 )
 
 
@@ -206,7 +206,7 @@ DELETE ca.*
 FROM casque ca
 LEFT JOIN type_casque tc ON ca.id_type_casque = tc.id_type_casque
 LEFT JOIN prendre_casque pc ON ca.id_casque = pc.id_casque
-WHERE tc.nom_type_casque LIKE "Grec" AND pc.id_bataille IS NULL
+WHERE LOWER(tc.nom_type_casque) = "grec" AND pc.id_bataille IS NULL
 
 -- D
 UPDATE personnage
@@ -215,27 +215,27 @@ SET
 	id_lieu = (
 		SELECT id_lieu
 		FROM lieu
-		WHERE nom_lieu LIKE "Condate"
+		WHERE LOWER(nom_lieu) = "condate"
 	)
-WHERE nom_personnage LIKE "Zérozérosix"
+WHERE LOWER(nom_personnage) = "zérozérosix"
 
 -- E
 DELETE co.*
 FROM composer co
 INNER JOIN potion po ON co.id_potion = po.id_potion
 INNER JOIN ingredient ing ON co.id_ingredient = ing.id_ingredient
-WHERE po.nom_potion LIKE "Soupe" AND ing.nom_ingredient LIKE "Persil"
+WHERE LOWER(po.nom_potion) = "soupe" AND LOWER(ing.nom_ingredient) = "persil"
 
 --OU
 DELETE FROM composer
 WHERE id_potion = (
 	SELECT id_potion
 	FROM potion
-	WHERE nom_potion LIKE "Soupe"
+	WHERE LOWER(nom_potion) = "soupe"
 ) AND id_ingredient = (
 	SELECT id_ingredient
 	FROM ingredient
-	WHERE nom_ingredient LIKE "Persil"
+	WHERE LOWER(nom_ingredient) = "persil"
 )
 
 -- F
@@ -247,15 +247,15 @@ SET
 	pr.id_casque = (
 		SELECT id_casque
 		FROM casque
-		WHERE nom_casque LIKE "Weisenau" 
+		WHERE LOWER(nom_casque) = "weisenau" 
 	),
 	pr.qte = 42
 WHERE 
-	ca.nom_casque LIKE "Ostrogoth" 
+	LOWER(ca.nom_casque) = "ostrogoth" 
 	AND 
-	ba.nom_bataille LIKE "Attaque de la banque postale" 
+	LOWER(ba.nom_bataille) = "attaque de la banque postale" 
 	AND 
-	per.nom_personnage LIKE "Obélix"
+	LOWER(per.nom_personnage) = "obélix"
 	
 
 
